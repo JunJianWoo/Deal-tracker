@@ -1,0 +1,23 @@
+.page-link{
+    font-weight: bold;
+}
+
+.direction{
+    padding-left: 17.5px;
+    padding-right: 17.5px;
+}
+
+.page-item{
+    cursor: pointer;
+}
+
+.pagination{
+    --bs-pagination-color: var(--primary-color);
+    --bs-pagination-hover-color: var(--secondary-color);
+    --bs-pagination-hover-bg: rgb(225, 225, 225);
+    --bs-pagination-active-bg: var(--primary-color);
+    --bs-pagination-active-border-color: var(--primary-color);
+    --bs-pagination-padding-x: 12.5px;
+    --bs-pagination-focus-color: var(--primary-color);
+    --bs-pagination-focus-box-shadow: var(--secondary-color);
+}

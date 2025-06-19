@@ -1,0 +1,125 @@
+:root{
+    --border-color: rgb(194, 194, 194);
+}
+
+.total-item-count{
+
+    font-size: 0.9em;
+    color: var(--faded-out-color);
+    align-self: flex-end;
+}
+
+.config-bar{
+    padding-left: 12px;
+    padding-top: 16px;
+    padding-right: 12px;
+    display: flex;
+}
+
+.filter-order-box{
+    margin-left: auto;
+    display: flex;
+}
+
+.btn{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    text-align: left;
+}
+
+.dropdown .dropdown-toggle::after{
+    margin-left: auto;
+    margin-right: 0px;
+    position: absolute;
+    right: 5.5px;
+    top:40%;
+    bottom: auto;
+}
+
+
+.btn{
+    --bs-btn-bg: rgba(255, 255, 255, 0);
+    --bs-btn-color: var(--primary-color);
+    --bs-btn-border-color: var(--primary-color);
+    padding-left: 15px;
+    padding-right: 15px;
+    --bs-btn-hover-bg: var(--primary-color);
+    --bs-btn-hover-border-color: var(--primary-color);
+    --bs-btn-active-border-color: var(--primary-color);
+    --bs-btn-active-bg: var(--primary-color);
+}
+
+.dropdown-menu{
+    --bs-dropdown-link-active-bg: lightgrey;
+    --bs-dropdown-link-active-color: black;
+    --bs-dropdown-link-hover-bg: var(--primary-color);
+    --bs-dropdown-link-hover-color: white;
+}
+
+.modal-container{
+    position: fixed;
+    width: 50%;
+    height:100%;
+    --bs-modal-bg: rgba(82, 74, 74, 0.695);
+}
+
+.filter-grid{
+    display: flex;
+    width: 100%;
+}
+
+.filter-box{
+    display: block;
+    flex: 0 0 auto;
+    margin: 12.5px 0px 0px 5px;
+    padding: 10px;
+    border-color: var(--border-color);
+    border-width: 1.2px;
+    border-style: solid;
+}
+
+.items-box{
+    flex: 1;
+}
+
+.filter-header{
+    font-weight: bold;
+    padding-bottom: 3px;
+    border-bottom: 1.2px solid var(--border-color);
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.form-check .form-check-input{
+    margin-left: -1.3em;
+    border-color: var(--border-color);
+}
+
+.form-check .form-check-input:checked{
+    background-color: var(--primary-color);
+}
+
+.form-check .form-check-input:focus{
+    box-shadow: 0 0 0 .05rem lightsalmon;
+}
+
+.form-control{
+    width: 11ch;
+    padding: 1px 6px;
+    text-align: center;
+}
+
+.form-control::placeholder{
+    color: lightgrey;
+}
+
+.form-control:focus{
+    border: .05rem solid lightsalmon;
+    box-shadow:0 0 0 .05rem lightsalmon;
+}
+
+.arrow-divider{
+    margin: 0px 7px
+}

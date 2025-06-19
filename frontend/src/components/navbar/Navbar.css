@@ -1,0 +1,48 @@
+.navbar{
+    background-color: #ed5436;
+}
+
+.nav-link{
+    color:black;
+    font-weight:bold;
+}
+
+.nav-link:hover{
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.fetch-text{
+    padding: 0;
+    padding-left: 3px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.fetch-icon {
+    height: 3.0rem;
+    width: 3.0rem;
+    fill: none; 
+    stroke: currentColor;
+    display: inline-block;
+}
+
+.fetch-container{ 
+    color: black;
+    align-items: center;
+    display: flex;
+    cursor: pointer;
+}
+
+.fetch-container:hover{
+    color: white;
+}
+
+.spinner{
+    margin-top: 1.0rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

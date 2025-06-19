@@ -1,0 +1,25 @@
+.card-container{
+    margin-top: 12.5px;
+    margin-bottom: 12.5px;
+}
+
+.column{
+    margin: 0px;
+    padding: 2.5px;
+}
+
+.page-holder{
+    margin-top: 10px;
+    display: grid;
+    justify-content: center;
+}
+
+.item-count{
+    display: flex;
+    justify-self:center;
+    color: var(--faded-out-color);
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: 0.85rem;
+}
+

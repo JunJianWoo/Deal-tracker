@@ -1,0 +1,9 @@
+:root {
+    --faded-out-color: grey;
+    --primary-color: #ee4d2d;
+    --secondary-color:#f68770;
+}
+body {
+    font-family: "Roboto","Arial",sans-serif;
+    background-color: rgba(240, 240, 240, 0.849);
+}   
