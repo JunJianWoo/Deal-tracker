@@ -1,20 +1,43 @@
-from flask_restful import Resource
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from scrapers.scraper_manager import ScraperManager
 from extensions import db
 from models import Item, ItemPrice, FetchHistory
 from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
+from util import singleton
 
-class ScrapeDataAPI(Resource):
-    def post(self):
+@singleton
+class DataScrapingScheduler:
+    SCHEDULED_TIME_HOUR = 4
+    SCHEDULED_TIME_MINUTE = 0
+
+    def __init__(self):
+        self.scheduler = BackgroundScheduler()
+
+        DataScrapingScheduler._web_scrape_job()
+
+        # Schedule future jobs
+        self.scheduler.add_job(DataScrapingScheduler._web_scrape_job, 'cron', hour=self.SCHEDULED_TIME_HOUR, minute=self.SCHEDULED_TIME_MINUTE)
+        self.start_scheduler()
+
+    def start_scheduler(self):
+        self.scheduler.start()
+
+    def shutdown_scheduler(self):
+        self.scheduler.shutdown(wait=False)
+
+    def get_jobs(self):
+        return self.scheduler.get_jobs()
+
+    def _web_scrape_job():
         # Check whether fetched
         stmt = db.select(FetchHistory).where(FetchHistory.date==datetime.now().date())
         if db.session.execute(stmt).first() is not None:
-            return { "status": "already fetched today" }, 304
+            return {'status': 'skipped', 'reason': 'already fetched today'}
         
         # Fetch if not already performed today
-        itemsAdded = 0
-        itemPriceAdded = 0
+        items_added = 0
+        item_prices_added = 0
         try:
             scrape_results = ScraperManager.scrape_all_data()
             for args in scrape_results['data']:
@@ -28,7 +51,7 @@ class ScrapeDataAPI(Resource):
                                 company_source = args['company_source']
                                 )
                     db.session.add(item)
-                    itemsAdded += 1
+                    items_added += 1
                 
                 # Create ItemPrice if not exists
                 result = db.session.execute(db.select(ItemPrice.id, ItemPrice.date).where(ItemPrice.id==item.id).where(ItemPrice.date==datetime.now().date()))
@@ -38,13 +61,13 @@ class ScrapeDataAPI(Resource):
                                         original_price= args['original_price'], 
                                         discounted_price= args['discounted_price'])
                     db.session.add(itemPrice)
-                    itemPriceAdded += 1
+                    item_prices_added += 1
 
                 db.session.flush() # Fail fast
 
             history = FetchHistory(date=datetime.now().date(), 
-                                   items_created=itemsAdded, 
-                                   item_prices_created = itemPriceAdded,
+                                   items_created=items_added, 
+                                   item_prices_created = item_prices_added,
                                     websites_failed=scrape_results['websites_failed'],
                                     successful_scrapes=scrape_results['successful_scrapes'])
             db.session.add(history)
@@ -52,9 +75,11 @@ class ScrapeDataAPI(Resource):
         except SQLAlchemyError|IntegrityError as e:
             db.session.rollback()
             print("Error:", e)
-            return {"status": "error"}
+            return {'status': 'failed', 'reason': 'SQL error'}
 
         return {"status": "success"}
+    
+
 
 # TODO: Cronify and schedule this job
 
