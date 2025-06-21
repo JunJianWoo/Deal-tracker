@@ -1,10 +1,12 @@
+import atexit
 from flask import Flask
 from dotenv import load_dotenv
 from extensions import db, migrate, api, cors
 from resources.routes.item_price import ItemPriceTodayAPI
 from resources.routes.items import SimilarItemAPI
-import os
 from scheduler.scrape_data import DataScrapingScheduler
+import os
+
 
 PORT_NUMBER = 8000
 
@@ -24,6 +26,9 @@ def create_app():
     api.add_resource(ItemPriceTodayAPI, "/api/dealstoday")
     api.add_resource(SimilarItemAPI,"/api/similar/<string:desc>")
 
+    scheduler = DataScrapingScheduler(app)
+    atexit.register(lambda: scheduler.shutdown())
+
     return app
 
 
@@ -34,4 +39,3 @@ if __name__ == "__main__":
 
 # TODO:
 # Search bar for similar items
-# Remove CORS

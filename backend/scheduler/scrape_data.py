@@ -11,25 +11,30 @@ class DataScrapingScheduler:
     SCHEDULED_TIME_HOUR = 4
     SCHEDULED_TIME_MINUTE = 0
 
-    def __init__(self):
+    def __init__(self, app):
         self.scheduler = BackgroundScheduler()
+        self.app = app
 
-        DataScrapingScheduler._web_scrape_job()
+        self._job_with_context()
 
         # Schedule future jobs
-        self.scheduler.add_job(DataScrapingScheduler._web_scrape_job, 'cron', hour=self.SCHEDULED_TIME_HOUR, minute=self.SCHEDULED_TIME_MINUTE)
-        self.start_scheduler()
+        self.scheduler.add_job(self._job_with_context, 'cron', hour=self.SCHEDULED_TIME_HOUR, minute=self.SCHEDULED_TIME_MINUTE)
+        self.start()
 
-    def start_scheduler(self):
+    def start(self):
         self.scheduler.start()
 
-    def shutdown_scheduler(self):
+    def shutdown(self):
         self.scheduler.shutdown(wait=False)
 
     def get_jobs(self):
         return self.scheduler.get_jobs()
+    
+    def _job_with_context(self):
+        with self.app.app_context():
+            return self._web_scrape_job()
 
-    def _web_scrape_job():
+    def _web_scrape_job(self):
         # Check whether fetched
         stmt = db.select(FetchHistory).where(FetchHistory.date==datetime.now().date())
         if db.session.execute(stmt).first() is not None:
@@ -78,9 +83,3 @@ class DataScrapingScheduler:
             return {'status': 'failed', 'reason': 'SQL error'}
 
         return {"status": "success"}
-    
-
-
-# TODO: Cronify and schedule this job
-
-
