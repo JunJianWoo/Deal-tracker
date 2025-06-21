@@ -72,26 +72,26 @@ class ScorptecScraper(Scraper):
                     imageDiv = productCard.find_element(By.CLASS_NAME,"detail-image-wrapper")
 
                 # Site and Image
-                websiteLink = imageDiv.find_element(By.TAG_NAME,'a').get_attribute("href")
-                imageLink = imageDiv.find_element(By.TAG_NAME,'img').get_attribute("src")
+                website_link = imageDiv.find_element(By.TAG_NAME,'a').get_attribute("href")
+                image_link = imageDiv.find_element(By.TAG_NAME,'img').get_attribute("src")
                 
                 # Prices
                 priceDiv = productCard.find_element(By.CLASS_NAME,"detail-product-prices")
-                discountedPrice = priceDiv.find_element(By.CLASS_NAME,"detail-product-price").text[1:]
+                discounted_price = priceDiv.find_element(By.CLASS_NAME,"detail-product-price").text[1:]
 
                 # Filter out refurbished goods 
                 try:
-                    originalPrice = priceDiv.find_element(By.CLASS_NAME,"detail-product-before-price").text[1:]
+                    original_price = priceDiv.find_element(By.CLASS_NAME,"detail-product-before-price").text[1:]
                 except NoSuchElementException:
                     continue
 
                 productItem.append({
                     "name": name,
-                    "imageLink": imageLink,
-                    "websiteLink": websiteLink,
-                    "discountedPrice": discountedPrice,
-                    "originalPrice": originalPrice,
-                    "companySource": self.WEBSITE
+                    "image_link": image_link,
+                    "website_link": website_link,
+                    "discounted_price": discounted_price,
+                    "original_price": original_price,
+                    "company_source": self.WEBSITE
                 })
 
             page_no += 1

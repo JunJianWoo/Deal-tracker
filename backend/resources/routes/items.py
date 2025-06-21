@@ -1,5 +1,6 @@
 from flask_restful import Resource
-from database import db, Item
+from extensions import db
+from models import Item
 
 class SimilarItemAPI(Resource):
     def get(self, desc):
@@ -12,7 +13,7 @@ class SimilarItemAPI(Resource):
         serialized_data = []
         for row in result.all():
             item = row[0]
-            serialized_data.append( item.to_dict())
+            serialized_data.append( item.to_dict()) 
 
         return serialized_data
     

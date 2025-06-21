@@ -63,19 +63,19 @@ class MSYScraper(Scraper):
             for productCard in productCards:
                 # Image
                 imageDiv = productCard.find_element(By.CLASS_NAME, "goods_img")
-                imageLink = imageDiv.find_element(By.TAG_NAME,"img").get_attribute("src")
+                image_link = imageDiv.find_element(By.TAG_NAME,"img").get_attribute("src")
 
                 # Site & Name
                 linkContainer = imageDiv.find_element(By.TAG_NAME, "a")
-                websiteLink = linkContainer.get_attribute("href")
+                website_link = linkContainer.get_attribute("href")
                 name = linkContainer.get_attribute("title")
                 
                 # Prices
                 priceDiv = productCard \
                     .find_element(By.CLASS_NAME, "goods_price_stock.goods_price_section") \
                     .find_element(By.CLASS_NAME, "goods-price.ele-goods-price")
-                discountedPrice = round(float(priceDiv.text.replace(",","")))
-                discountedPrice = int(discountedPrice)
+                discounted_price = round(float(priceDiv.text.replace(",","")))
+                discounted_price = int(discounted_price)
 
                 # Find Original Price
                 try:
@@ -87,21 +87,21 @@ class MSYScraper(Scraper):
                     occurIdx = discountText.index("save")
                     discountAmount = MSYScraper.priceFromString(discountText[occurIdx+6:])
                     
-                    originalPrice = discountAmount + discountedPrice
+                    original_price = discountAmount + discounted_price
                 else:
                     occurIdx = discountText.index("% off!")
                     
                     discountPercent = int( discountText[:occurIdx] )
-                    originalPrice = discountedPrice/(100-discountPercent)*100
-                originalPrice = int(round(originalPrice))
+                    original_price = discounted_price/(100-discountPercent)*100
+                original_price = int(round(original_price))
 
                 productItem.append({
                     "name": name,
-                    "imageLink": imageLink,
-                    "websiteLink": websiteLink,
-                    "discountedPrice": discountedPrice,
-                    "originalPrice": originalPrice,
-                    "companySource": self.WEBSITE
+                    "image_link": image_link,
+                    "website_link": website_link,
+                    "discounted_price": discounted_price,
+                    "original_price": original_price,
+                    "company_source": self.WEBSITE
                 })
 
         return productItem

@@ -16,13 +16,24 @@ class Scraper(ABC):
     
     def scrape(self) -> List[Dict]:
         self.driver = webdriver.Chrome()
-        products = self.extract_info()
-        self.driver.quit()
-        print(f"Driver Quit Occurs")
+        try:
+            data = self.extract_info()
+        except Exception as e:
+            raise e
+            data = None
+        finally:
+            self.driver.quit()
+            print(f"Driver Quit Occurs")
+        
+        return data
 
     @abstractmethod
     def extract_info(self) -> List[Dict]:
         """
-        Handles parsing the HTML elements in website to get product information
+        Parses the website's HTML to extract product info.
+
+        Returns a list of dicts with keys:
+        - "name", "image_link", "website_link", "discounted_price", 
+          "original_price", "company_source"
         """
         pass
