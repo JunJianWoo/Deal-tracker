@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from extensions import db
 from models import Item
+from serializers.item_schema import ItemSchema
 
 class SimilarItemAPI(Resource):
     def get(self, desc):
@@ -10,10 +11,11 @@ class SimilarItemAPI(Resource):
         )
 
         # Serialize into Json
-        serialized_data = []
-        for row in result.all():
-            item = row[0]
-            serialized_data.append( item.to_dict()) 
+        item_serializer = ItemSchema()
+        serialized_data = [
+            item_serializer.dump(row[0])
+            for row in result.all()
+        ]
 
         return serialized_data
     
