@@ -1,36 +1,50 @@
-from flask_restful import Resource, reqparse
+from datetime import datetime
+from flask import request
+from flask_restful import Resource
+from marshmallow import Schema, fields, ValidationError, pre_load
 from extensions import db
 from models import Item, ItemPrice
-from datetime import datetime
+from serializers.item_price_schema import ItemPriceSchema
+from serializers.item_schema import ItemSchema
+
+class FilterSchema(Schema):
+    company_source = fields.List(fields.String(),load_default=[])
+    min_price = fields.Float(load_default=0)
+    max_price = fields.Float(load_default=1.0e308)
+
+    @pre_load
+    def normalise_company_source(self, raw_data, **kwargs):
+        """ Pre-process list of strings from GET params """
+        data = raw_data.to_dict()
+
+        if 'company_source' in raw_data:
+            data['company_source'] = raw_data.getlist('company_source')
+
+        return data
+
 
 class ItemPriceTodayAPI(Resource):
+    def get(self):
+        try:
+            args = FilterSchema().load(request.args)
+        except ValidationError as err:
+            return {"errors":err.messages}, 400
 
-    filter_parser = reqparse.RequestParser()
-    filter_parser.add_argument('company_source', type=str, action="append", help = 'Sources of item to be included (leave empty for all)')
-    filter_parser.add_argument('minPrice', type=float, default= 0, help= 'Minimum price for item to be included')
-    filter_parser.add_argument('maxPrice',type=float, default ="1.0e308", help='Maximum price for item to still be included')
-
-    def post(self):
-        args = self.filter_parser.parse_args()
 
         stmt = db.select(ItemPrice, Item) \
-              .where(ItemPrice.date==datetime.now().date(), ItemPrice.discounted_price >= args.minPrice, ItemPrice.discounted_price <= args.maxPrice) \
-                .where(Item.company_source.in_(args.company_source if args.company_source else [])) \
+              .where(ItemPrice.date==datetime.now().date(), ItemPrice.discounted_price >= args['min_price'], ItemPrice.discounted_price <= args['max_price']) \
+                .where(Item.company_source.in_(args['company_source'])) \
                     .join(Item) \
                         .order_by(Item.id)
 
         result = db.session.execute(stmt)
 
         # Serialize into Json
-        serialized_data = []
-        for row in result.all():
-            itemPrice, item = row
-            serialized_data.append( item.to_dict() | itemPrice.to_dict() )
+        item_serializer = ItemSchema()
+        item_price_serializer = ItemPriceSchema()
+        serialized_data = [
+            item_serializer.dump(item) | item_price_serializer.dump(item_price)
+            for item_price, item in result.all()
+        ]
 
-        # return serialized_data
         return serialized_data
-    
-
-class ItemPriceNotTodayAPI(Resource):
-    def get(self):
-        pass
